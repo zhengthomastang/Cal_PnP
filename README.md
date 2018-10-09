@@ -26,19 +26,20 @@ This package is designed for computing camera homography matrix. The input inclu
     <img src="/pic/pic0.png", width="611">
 </div>
 
-3. If the user wants to select the corresponding 2D pixel points on the image, set `calSel2dPtFlg` to 1. A new window called `selector of 2D points` pops out. The user can click on the image to select each 2D point. A blue circle stands for each click. After the selection is done, click `o`. Please make sure the number of selected 2D points should be the same as the provided 3D points (in the same order). During the selection, if mis-clicking on wrong places, the user can press `r`. All the markers will be cleared, and s/he can start over.
+3. If the user wants to select the corresponding 2D pixel points on the image, set `calSel2dPtFlg` to 1. A new window called `selector of 2D points` pops out. The user can click on the image to select each 2D point. A blue circle stands for each click. After the selection is done, click `o`. Please make sure the number of selected 2D points should be the same as the provided 3D points (in the same order). During the selection, if mis-clicking on wrong places, the user can press `r`. All the markers will be cleared, and s/he can start over. 
 
 <div align="center">
     <img src="/pic/pic1.jpg", width="640">
 </div>
 
 4. If there exists redial distortion, the frame image can be manually corrected by by setting `calDistFlg` to 1 and providing the distortion coefficients (`calDistCoeff`) and intrinsic camera parameters (`calFocLen` and `calPrinPt`). 
+5. The user can choose to use different methods for camera calibration by setting `calTyp`, whose introduction is at this [link](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography). Note that when using RANSAC-based robust method, the threshold parameter needs to be provided at  `calRansacReprojThld`. 
+6. The user can choose to output the display image (with a colorful grid on the 3D plane) by setting `outCalDispFlg` to 1. The blue circles show the input 2D pixel points. The red circles show the corresponding points back projected from 3D. The distance between their centers indicates the reprojection error. 
 
 <div align="center">
     <img src="/pic/pic2.jpg", width="640">
 </div>
 
-5. The user can choose to output the display image (with a colorful grid on the 3D plane) by setting `outCalDispFlg` to 1. 
 
 ## Disclaimer
 For any question you can contact [Zheng (Thomas) Tang](https://github.com/zhengthomastang).
