@@ -1,0 +1,60 @@
+{
+  // general information
+  "genInfo": {
+    // path of input video frame
+    "inFrmPth": "./data/frm.jpg",
+    // path of output text file of camera matrix
+    "outCamMatPth": "./data/calibration.txt",
+    // path of output display image of camera calibration, necessary when outCalDispFlg = 1
+    "outCalDispPth": "./data/calibration.jpg",
+    // flag of output display image of camera calibration
+    "outCalDispFlg": 1,
+    // resized video frame height (negative: original size)
+    "rszFrmHei": -1
+  },
+  // camera calibration
+  "camCal": {
+    // flag of selecting 2D points on the frame image
+    "calSel2dPtFlg": 0,
+    // input sequence of 2D points on the ground plane, necessary when calSel2dPtFlg = 0
+    "cal2dPtLs": [
+      [ 1045, 893 ],
+      [ 1576, 969 ],
+      [ 1593, 415 ],
+      [ 1802, 471 ],
+      [ 1608, 379 ],
+      [ 845, 290 ],
+      [ 941, 271 ],
+      [ 711, 278 ],
+      [ 126, 480 ],
+      [ 73, 436 ]
+    ],
+    // input sequence of 3D points on the ground plane
+    "cal3dPtLs": [
+      [ 42.498349, -90.688198 ],
+      [ 42.498338, -90.688232 ],
+      [ 42.498229, -90.688179 ],
+      [ 42.498231, -90.688216 ],
+      [ 42.498205, -90.688171 ],
+      [ 42.498248, -90.688020 ],
+      [ 42.498221, -90.688014 ],
+      [ 42.498253, -90.687983 ],
+      [ 42.498368, -90.688038 ],
+      [ 42.498369, -90.688001 ]
+    ],
+    // method used to computed the camera matrix: 0 - a regular method using all the points; 4 - Least-Median robust method; 8 - RANSAC-based robust method
+    "calTyp": 0,
+    // maximum allowed reprojection error to treat a point pair as an inlier, necessary when calTyp = 8
+    "calRansacReprojThld": 100.0,
+    // dimension of the grid on the ground plane to display
+    "calDispGrdDim": [ 10, 10 ],
+    // flag of camera undistortion (if 1, require initial intrinsic camera parameters)
+    "calDistFlg": 0,
+    // input distortion coefficients, necessary when calDistFlg = 1
+    "calDistCoeff": [ 0.0, 0.0, 0.0, 0.0 ],
+    // focal length(s) of the camera intrinsic matrix, necessary when calDistFlg = 1
+    "calFocLen": [ -1 ],
+    // principal point of the camera intrinsic matrix, necessary when calDistFlg = 1
+    "calPrinPt": [ -1, -1 ]
+  }
+}
