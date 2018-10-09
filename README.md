@@ -20,7 +20,7 @@ This package is designed for computing camera homography matrix. The input inclu
 
 ## How to Use
 1. Set the corresponding input/output paths in the configuration file if necessary. 
-2. Provide the coordinates of a set of 3D points on the ground plane (or any plane of interest). One way to do so is to find the GPS coordinates using [Google Maps](https://www.google.com/maps). 
+2. Provide the coordinates of **at least 4** 3D points on the ground plane (or any plane of interest) at `cal3dPtLs`. One way is to find the GPS coordinates using [Google Maps](https://www.google.com/maps). 
 
 <div align="center">
     <img src="/pic/pic0.png", width="611">
