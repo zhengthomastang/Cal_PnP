@@ -51,6 +51,9 @@ void CCamCal::initialize(CCfg oCfg, cv::Mat oImgFrm)
 
 	// homography matrix
 	m_oHomoMat = cv::Mat(3, 3, CV_64F);
+
+	// reprojection error
+	m_fReprojErr = DBL_MAX;
 }
 
 void CCamCal::process(void)
@@ -71,16 +74,18 @@ void CCamCal::process(void)
 				std::cout << "[ " << vo2dPt[i].x << ", " << vo2dPt[i].y << " ]" << std::endl;
 		}
 	}
-	
+
 	// compute homography matrix
-	m_oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, m_oCfg.getCalTyp(), m_oCfg.getCalRansacReprojThld());
+	if (-1 == m_oCfg.getCalTyp())
+		// run all calibration types
+        	runAllCalTyp();
+	else
+	{
+        	m_oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, m_oCfg.getCalTyp(), m_oCfg.getCalRansacReprojThld());
+        	m_fReprojErr = calcReprojErr(m_oHomoMat, m_oCfg.getCalTyp(), m_oCfg.getCalRansacReprojThld());
+	}
 
-	// calculate reprojection error
-	calcReprojErr(m_oHomoMat, m_oCfg.getCalTyp(), m_oCfg.getCalRansacReprojThld());
 	std::cout << std::endl;
-
-	//// run all calibration types
-	//runAllCalTyp();
 }
 
 void CCamCal::output(void)
@@ -95,24 +100,64 @@ void CCamCal::output(void)
 void CCamCal::runAllCalTyp(void)
 {
 	cv::Mat oHomoMat;
-	
+	double fReprojErr;
+
 	// a regular method using all the points
-	oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 0, 0);
-	calcReprojErr(oHomoMat, 0, 0);
+	try
+	{
+		oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 0, 0);
+		fReprojErr = calcReprojErr(oHomoMat, 0, 0);
+		if (fReprojErr < m_fReprojErr)
+		{
+        		m_fReprojErr = fReprojErr;
+        		m_oHomoMat = oHomoMat;
+		}
+        }
+        catch(cv::Exception& e)
+        {
+                const char* pcErrMsg = e.what();
+                std::cout << "Exception caught: " << pcErrMsg << std::endl;
+        }
 
 	// Least-Median robust method
-	oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 4, 0);
-	calcReprojErr(oHomoMat, 4, 0);
+	try
+	{
+		oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 4, 0);
+		fReprojErr = calcReprojErr(oHomoMat, 4, 0);
+		if (fReprojErr < m_fReprojErr)
+		{
+        		m_fReprojErr = fReprojErr;
+        		m_oHomoMat = oHomoMat;
+		}
+        }
+        catch(cv::Exception& e)
+        {
+                const char* pcErrMsg = e.what();
+                std::cout << "Exception caught: " << pcErrMsg << std::endl;
+        }
 
 	// RANSAC-based robust method
 	for (double t = 100; t >= 10; t -= 5)
 	{
-		oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 8, t);
-		calcReprojErr(oHomoMat, 8, t);
+		try
+		{
+			oHomoMat = cv::findHomography(m_vo3dPt, m_vo2dPt, 8, t);
+			fReprojErr = calcReprojErr(oHomoMat, 8, t);
+			if (fReprojErr < m_fReprojErr)
+        		{
+        			m_fReprojErr = fReprojErr;
+        			m_oHomoMat = oHomoMat;
+        		}
+        	}
+        	catch(cv::Exception& e)
+        	{
+                	const char* pcErrMsg = e.what();
+                	std::cout << "Exception caught: " << pcErrMsg << std::endl;
+        	}
 	}
 }
 
-void CCamCal::calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacReprojThld)
+double CCamCal::calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacReprojThld)
 {
 	double fReprojErr = 0;
 
@@ -130,31 +175,53 @@ void CCamCal::calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacRepr
 
 		fReprojErr += cv::norm(m_vo2dPt[i] - o2dPt);
 	}
-	
+
 	fReprojErr /= m_vo3dPt.size();
 
 	if (8 == nCalTyp)
 		std::cout << "Average reprojection error of method #" << nCalTyp << " (threshold: " << fCalRansacReprojThld << "): " << fReprojErr << std::endl;
 	else
 		std::cout << "Average reprojection error of method #" << nCalTyp << ": " << fReprojErr << std::endl;
+
+    return fReprojErr;
 }
 
 void CCamCal::outTxt(void)
 {
 	FILE* pfHomoMat = std::fopen(m_oCfg.getOutCamMatPth(), "w");
 
-	std::fprintf(pfHomoMat, "%.7f %.7f %.7f;%.7f %.7f %.7f;%.7f %.7f %.7f\n",
-		m_oHomoMat.at<double>(0, 0), m_oHomoMat.at<double>(0, 1), m_oHomoMat.at<double>(0, 2), 
-		m_oHomoMat.at<double>(1, 0), m_oHomoMat.at<double>(1, 1), m_oHomoMat.at<double>(1, 2), 
+	std::fprintf(pfHomoMat, "Homography matrix: %.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf\n",
+		m_oHomoMat.at<double>(0, 0), m_oHomoMat.at<double>(0, 1), m_oHomoMat.at<double>(0, 2),
+		m_oHomoMat.at<double>(1, 0), m_oHomoMat.at<double>(1, 1), m_oHomoMat.at<double>(1, 2),
+		m_oHomoMat.at<double>(2, 0), m_oHomoMat.at<double>(2, 1), m_oHomoMat.at<double>(2, 2));
+	std::printf("Homography matrix: %.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf\n",
+		m_oHomoMat.at<double>(0, 0), m_oHomoMat.at<double>(0, 1), m_oHomoMat.at<double>(0, 2),
+		m_oHomoMat.at<double>(1, 0), m_oHomoMat.at<double>(1, 1), m_oHomoMat.at<double>(1, 2),
 		m_oHomoMat.at<double>(2, 0), m_oHomoMat.at<double>(2, 1), m_oHomoMat.at<double>(2, 2));
 
 	if (m_oCfg.getCalDistFlg())
 	{
+	    cv::Mat oCalIntMat = m_oCfg.getCalIntMat();
+	    std::fprintf(pfHomoMat, "Intrinsic parameter matrix: %.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf\n",
+            	oCalIntMat.at<double>(0, 0), oCalIntMat.at<double>(0, 1), oCalIntMat.at<double>(0, 2),
+            	oCalIntMat.at<double>(1, 0), oCalIntMat.at<double>(1, 1), oCalIntMat.at<double>(1, 2),
+            	oCalIntMat.at<double>(2, 0), oCalIntMat.at<double>(2, 1), oCalIntMat.at<double>(2, 2));
+	    std::printf("Intrinsic parameter matrix: %.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf;%.15lf %.15lf %.15lf\n",
+            	oCalIntMat.at<double>(0, 0), oCalIntMat.at<double>(0, 1), oCalIntMat.at<double>(0, 2),
+            	oCalIntMat.at<double>(1, 0), oCalIntMat.at<double>(1, 1), oCalIntMat.at<double>(1, 2),
+            	oCalIntMat.at<double>(2, 0), oCalIntMat.at<double>(2, 1), oCalIntMat.at<double>(2, 2));
+
 		cv::Mat oCalDistCoeffMat = m_oCfg.getCalDistCoeffMat();
-		std::fprintf(pfHomoMat, "%.7f %.7f %.7f %.7f\n",
-			oCalDistCoeffMat.at<double>(0), oCalDistCoeffMat.at<double>(1), 
+		std::fprintf(pfHomoMat, "Distortion coefficients: %.15lf %.15lf %.15lf %.15lf\n",
+			oCalDistCoeffMat.at<double>(0), oCalDistCoeffMat.at<double>(1),
+			oCalDistCoeffMat.at<double>(2), oCalDistCoeffMat.at<double>(3));
+		std::printf("Distortion coefficients: %.15lf %.15lf %.15lf %.15lf\n",
+			oCalDistCoeffMat.at<double>(0), oCalDistCoeffMat.at<double>(1),
 			oCalDistCoeffMat.at<double>(2), oCalDistCoeffMat.at<double>(3));
 	}
+
+	std::fprintf(pfHomoMat, "Reprojection error: %.15lf\n", m_fReprojErr);
+	std::printf("Reprojection error: %.15lf\n", m_fReprojErr);
 
 	std::fclose(pfHomoMat);
 }
@@ -267,7 +334,7 @@ void CCamCal::pltDispGrd(void)
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = m_oHomoMat * o3dPtMat;
 
-		cv::circle(oImgPlt, cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))), 
+		cv::circle(oImgPlt, cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))),
 			12, cv::Scalar(0, 0, 255), 1, CV_AA);  // draw the circle
 	}
 
@@ -360,7 +427,7 @@ void C2dPtSel::addNd(int nX, int nY)
 	m_voNd.push_back(oCurrNd);
 	// std::cout << "current node(" << oCurrNd.x << "," << oCurrNd.y << ")" << std::endl;	// for debug
 	cv::circle(m_oImgFrm, oCurrNd, 6, cv::Scalar(255, 0, 0), 1, CV_AA);  // draw the circle
-	std::sprintf(acNdIdx, "%d", (m_voNd.size() - 1));
+	std::sprintf(acNdIdx, "%d", (int)(m_voNd.size() - 1));
 	cv::putText(m_oImgFrm, acNdIdx, oCurrNd, cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 2);
 	cv::imshow("selector of 2D points", m_oImgFrm);
 }

@@ -21,7 +21,7 @@ private:
 	//! runs all calibration types
 	void runAllCalTyp(void);
 	//! calculates reprojection error
-	void calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacReprojThld);
+	double calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacReprojThld);
 	//! outputs text file of homography matrix
 	void outTxt(void);
 	//! plots a display grid on the ground plane
@@ -37,6 +37,8 @@ private:
 	std::vector<cv::Point2f> m_vo2dPt;
 	//! homography matrix
 	cv::Mat m_oHomoMat;
+	//! reprojection error
+	double m_fReprojErr;
 };
 
 // selector of 2D points for PnP

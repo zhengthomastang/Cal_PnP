@@ -124,7 +124,7 @@ void CCfg::ldCfgFl(char* acCfgFlPth)
 	CV_Assert(4 <= m_voCal3dPt.size());
 	if (!m_bCalSel2dPtFlg)
 		CV_Assert(m_voCal2dPt.size() == m_voCal3dPt.size());
-	CV_Assert((0 == m_nCalTyp) || (4 == m_nCalTyp) || (8 == m_nCalTyp));
+	CV_Assert((0 == m_nCalTyp) || (4 == m_nCalTyp) || (8 == m_nCalTyp) || (-1 == m_nCalTyp));
 	CV_Assert(1 <= m_fCalRansacReprojThld);
 	CV_Assert((1 <= m_oCalDispGrdDim.width) && (1 <= m_oCalDispGrdDim.height));
 

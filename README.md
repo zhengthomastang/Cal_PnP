@@ -15,7 +15,7 @@ This package is designed for computing camera homography matrix. The input inclu
 
 ## How to Build
 1. Download and make the OpenCV library.
-2. Compile using g++ in Linux environment. If you are new to g++ compilation with OpenCV, please refer to this [link](http://answers.opencv.org/question/25642/how-to-compile-basic-opencv-program-in-c-in-ubuntu/). In the command window, you can `cd` to the directory of `./Cal_PnP-master/` and use the following command to compile our source code, where `bin` is the executable file generated.  
+2. Compile using g++ in Linux environment. If you are new to g++ compilation with OpenCV, please refer to this [link](http://answers.opencv.org/question/25642/how-to-compile-basic-opencv-program-in-c-in-ubuntu/). In the command window, you can `cd` to the directory of `./Cal_PnP-master/` and use the following command to compile our source code, where `bin` is the executable file generated. Note that you may need to add `sudo` at the beginning to grant the admin permission.
 ```g++ -I/usr/local/include/ -L/usr/local/lib/ -g -o bin ./src/main.cpp ./src/Cfg.cpp ./src/CamCal.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_calib3d -lm```
 
 ## How to Use
@@ -33,8 +33,8 @@ This package is designed for computing camera homography matrix. The input inclu
 </div>
 
 4. If there exists redial distortion, the frame image can be manually corrected by by setting `calDistFlg` to 1 and providing the distortion coefficients (`calDistCoeff`) and intrinsic camera parameters (`calFocLen` and `calPrinPt`). 
-5. The user can choose to use different methods for camera calibration by setting `calTyp`, whose introduction is at this [link](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography). Note that when using RANSAC-based robust method, the threshold parameter needs to be provided at  `calRansacReprojThld`. 
-6. The output text file shows the 3x3 homography matrix at the first line. If the correction of radial distortion is conducted, the 1x4 distortion coefficients are also printed at the second line. 
+5. The user can choose to use different methods for camera calibration by setting `calTyp`, whose introduction is at this [link](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography). Note that when using RANSAC-based robust method, the threshold parameter needs to be provided at  `calRansacReprojThld`. When setting `calTyp` as -1, all the methods will be conducted and evaluated, the one with the minimum reprojection error will be chosen. 
+6. The output text file shows the 3x3 homography matrix at the first line. If the correction of radial distortion is conducted, the 3x3 intrinsic parameter matrix and 1x4 distortion coefficients are also printed. Finally, the reprojection error in pixels is also printed. 
 7. The user can choose to output the display image (with a colorful grid on the 3D plane) by setting `outCalDispFlg` to 1. The blue circles show the input 2D pixel points. The red circles show the corresponding points back projected from 3D. The distance between their centers indicates the reprojection error. 
 
 <div align="center">

@@ -66,7 +66,7 @@ private:
 	std::vector<cv::Point2f> m_voCal2dPt;
 	//! input sequence of 3D points on the ground plane
 	std::vector<cv::Point2f> m_voCal3dPt;
-	//! method used to computed the camera matrix: 0 - a regular method using all the points; 4 - Least-Median robust method; 8 - RANSAC-based robust method
+	//! method used to computed the camera matrix: 0 - a regular method using all the points; 4 - Least-Median robust method; 8 - RANSAC-based robust method; -1 - Optimum method with minimum reprojection error
 	int m_nCalTyp;
 	//! maximum allowed reprojection error to treat a point pair as an inlier, necessary when m_nCalTyp == 8
 	double m_fCalRansacReprojThld;

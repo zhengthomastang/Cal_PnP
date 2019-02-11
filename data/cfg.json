@@ -42,8 +42,8 @@
       [ 42.498368, -90.688038 ],
       [ 42.498369, -90.688001 ]
     ],
-    // method used to computed the camera matrix: 0 - a regular method using all the points; 4 - Least-Median robust method; 8 - RANSAC-based robust method
-    "calTyp": 0,
+    // method used to computed the camera matrix: 0 - a regular method using all the points; 4 - Least-Median robust method; 8 - RANSAC-based robust method; -1 - Optimum method with minimum reprojection error
+    "calTyp": -1,
     // maximum allowed reprojection error to treat a point pair as an inlier, necessary when calTyp = 8
     "calRansacReprojThld": 100.0,
     // dimension of the grid on the ground plane to display
