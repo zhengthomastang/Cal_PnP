@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	else if (2 == argc)
 		oCfg.ldCfgFl(argv[1]);
 	else
-		oCfg.ldCfgFl('\0');
+		oCfg.ldCfgFl(NULL);
 
 	// read frame image
 	oImgFrm = cv::imread(oCfg.getInFrmPth(), cv::IMREAD_COLOR);
