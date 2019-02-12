@@ -58,7 +58,7 @@ void CCfg::ldCfgFl(char* acCfgFlPth)
 
 	std::string strCfg(pcBuf);
 	//strCfg.erase(std::remove_if(strCfg.begin(), strCfg.end(), [](char c) { return c >= 0 && isspace(c); }), strCfg.end());	// in Windows
-    strCfg.erase(std::remove_if(strCfg.begin(), strCfg.end(), ::isspace), strCfg.end());	// in Linux
+	strCfg.erase(std::remove_if(strCfg.begin(), strCfg.end(), ::isspace), strCfg.end());	// in Linux
 
 	int nParamPos = strCfg.find("\"inFrmPth\"");
 	if (std::string::npos != nParamPos)
@@ -92,7 +92,7 @@ void CCfg::ldCfgFl(char* acCfgFlPth)
 	if (std::string::npos != nParamPos)
 		m_voCal3dPt = rdVec2dPt(strCfg, nParamPos);
 
-    nParamPos = strCfg.find("\"calTyp\"");
+	nParamPos = strCfg.find("\"calTyp\"");
 	if (std::string::npos != nParamPos)
 		m_nCalTyp = rdInt(strCfg, nParamPos);
 
