@@ -45,7 +45,7 @@ This package is designed for computing camera homography matrix. The input inclu
     <img src="/pic/pic2.jpg", width="640">
 </div>
 
-8. Run the executable file
+8. Run the executable file.
 
 ```./bin```
 
