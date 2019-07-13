@@ -7,6 +7,7 @@ This repository contains our C++ implementation of semi-automatic camera calibra
 This package is designed for computing camera homography matrix. The input includes a set of 3D points on the 3D ground plane and the corresponding 2D pixel points. We adopt the Perspective-n-Point (PnP) for camera calibration. The user can choose from different approaches such as (1) a regular method using all the points, (2) RANSAC-based robust method or (3) Least-Median robust method. The package also includes tools for manual 2D points selection. 
 
 ## Coding Structure
+
 1. `./obj/` folder: Libraries of .cpp files
 2. `./src/` folder: Source code
 3. `./data/` folder: Example input files
@@ -14,10 +15,11 @@ This package is designed for computing camera homography matrix. The input inclu
    2. `frm.jpg`: Input frame image
 
 ## How to Build
-1. Download and make the OpenCV library.
-2. Compile using g++ in Linux environment. If you are new to g++ compilation with OpenCV, please refer to this [link](http://answers.opencv.org/question/25642/how-to-compile-basic-opencv-program-in-c-in-ubuntu/). In the command window, you can `cd` to the directory of `./Cal_PnP/` and use the following command to compile our source code, where `bin` is the executable file generated. Note that you may need to add `sudo` at the beginning to grant the admin permission.
 
+1. Download and make the OpenCV library. A tutorial is given [here](https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html).
+2. Compile using g++ in Linux environment. If you are new to g++ compilation with OpenCV, please refer to this [link](http://answers.opencv.org/question/25642/how-to-compile-basic-opencv-program-in-c-in-ubuntu/). In the command window, you can `cd` to the directory of `./Cal_PnP/` and use the following command to compile our source code, where `bin` is the executable file generated. Note that you may need to add `sudo` at the beginning to grant the admin permission.
 ```g++ -I/usr/local/include/ -L/usr/local/lib/ -g -o bin ./src/main.cpp ./src/Cfg.cpp ./src/CamCal.cpp -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_calib3d -lm```
+
 
 ## How to Use
 1. Set the corresponding input/output paths in the configuration file if necessary. 
@@ -42,8 +44,9 @@ This package is designed for computing camera homography matrix. The input inclu
     <img src="/pic/pic2.jpg", width="640">
 </div>
 
+8. Run the executable file
+```./bin```
 
 ## Disclaimer
+
 For any question you can contact [Zheng (Thomas) Tang](https://github.com/zhengthomastang).
-
-
