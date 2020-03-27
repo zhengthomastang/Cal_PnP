@@ -49,6 +49,25 @@ This package is designed for computing camera homography matrix. The input inclu
 
 ```./bin```
 
+## References
+
+The code was applied to the generation of baseline camera calibration results for the CityFlow benchmark used in the [AI City Challenge Workshops](https://www.aicitychallenge.org/). Please consider to cite these papers in your publications if it helps your research:
+
+    @inproceedings{Tang18AIC,
+      author = {Zheng Tang and Gaoang Wang and Hao Xiao and Aotian Zheng and Jenq-Neng Hwang},
+      title = {Single-camera and inter-camera vehicle tracking and {3D} speed estimation based on fusion of visual and semantic features},
+      booktitle = {Proc. CVPR Workshops},
+      pages = {108--115}, 
+      year = {2018}
+    }
+
+    @misc{Tang17AIC,
+      author = {Zheng Tang and Gaoang Wang and Tao Liu and Young-Gun Lee and Adwin Jahn and Xu Liu and Xiaodong He and Jenq-Neng Hwang},
+      title = {Multiple-kernel based vehicle tracking using {3D} deformable model and camera self-calibration},
+      howpublished = {arXiv:1708.06831},
+      year = {2017}
+    }
+
 ## Disclaimer
 
 For any question you can contact [Zheng (Thomas) Tang](https://github.com/zhengthomastang).
