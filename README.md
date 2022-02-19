@@ -38,7 +38,7 @@ This package is designed for computing camera homography matrix. The input inclu
     <img src="/pic/pic1.jpg", width="640">
 </div>
 
-4. If there exists redial distortion, the frame image can be manually corrected by by setting `calDistFlg` to 1 and providing the distortion coefficients (`calDistCoeff`) and intrinsic camera parameters (`calFocLen` and `calPrinPt`). 
+4. If there exists radial distortion, the frame image can be manually corrected by by setting `calDistFlg` to 1 and providing the distortion coefficients (`calDistCoeff`) and intrinsic camera parameters (`calFocLen` and `calPrinPt`). 
 5. The user can choose to use different methods for camera calibration by setting `calTyp`, whose introduction is at this [link](https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography). Note that when using RANSAC-based robust method, the threshold parameter needs to be provided at  `calRansacReprojThld`. When setting `calTyp` as -1, all the methods will be conducted and evaluated, the one with the minimum reprojection error will be chosen. 
 6. The output text file shows the 3x3 homography matrix at the first line. If the correction of radial distortion is conducted, the 3x3 intrinsic parameter matrix and 1x4 distortion coefficients are also printed. Finally, the reprojection error in pixels is printed as well. 
 7. The user can choose to output the display image (with a colorful grid on the 3D plane) by setting `outCalDispFlg` to 1. The blue circles show the input 2D pixel points. The red circles show the corresponding points back projected from 3D. The distance between their centers indicates the reprojection error. 
