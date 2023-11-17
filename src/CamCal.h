@@ -45,8 +45,8 @@ private:
 class C2dPtSel
 {
 public:
-	C2dPtSel(void);
-	~C2dPtSel(void);
+	C2dPtSel(void) = default;
+	~C2dPtSel(void) = default;
 
 	//! initializes the 2D point selector
 	void initialize(CCfg oCfg, cv::Mat oImgFrm);

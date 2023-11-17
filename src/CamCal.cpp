@@ -10,7 +10,7 @@ void on_mouse(int event, int x, int y, int flags, void*)  // mouse event
 		return;
 	}
 
-	if (event == CV_EVENT_FLAG_LBUTTON)
+	if (event == cv::EVENT_FLAG_LBUTTON)
 		o2dPtSel.addNd(x, y);
 
 	return;
@@ -165,13 +165,12 @@ double CCamCal::calcReprojErr(cv::Mat oHomoMat, int nCalTyp, double fCalRansacRe
 	{
 		cv::Mat o3dPtMat(3, 1, CV_64F);
 		cv::Mat o2dPtMat(3, 1, CV_64F);
-		cv::Point2f o2dPt;
 
 		o3dPtMat.at<double>(0, 0) = m_vo3dPt[i].x;
 		o3dPtMat.at<double>(1, 0) = m_vo3dPt[i].y;
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = oHomoMat * o3dPtMat;
-		o2dPt = cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
+		cv::Point2f o2dPt((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
 
 		fReprojErr += cv::norm(m_vo2dPt[i] - o2dPt);
 	}
@@ -279,13 +278,13 @@ void CCamCal::pltDispGrd(void)
 		o3dPtMat.at<double>(1, 0) = vo3dGrdPtTop[i].y;
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = m_oHomoMat * o3dPtMat;
-		vo2dGrdPtTop.push_back(cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))));
+		vo2dGrdPtTop.emplace_back((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
 
 		o3dPtMat.at<double>(0, 0) = vo3dGrdPtBtm[i].x;
 		o3dPtMat.at<double>(1, 0) = vo3dGrdPtBtm[i].y;
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = m_oHomoMat * o3dPtMat;
-		vo2dGrdPtBtm.push_back(cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))));
+		vo2dGrdPtBtm.emplace_back((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
 	}
 
 	for (int i = 0; i < oDispGrdDim.height; i++)
@@ -297,27 +296,27 @@ void CCamCal::pltDispGrd(void)
 		o3dPtMat.at<double>(1, 0) = vo3dGrdPtLft[i].y;
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = m_oHomoMat * o3dPtMat;
-		vo2dGrdPtLft.push_back(cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))));
+		vo2dGrdPtLft.emplace_back((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
 
 		o3dPtMat.at<double>(0, 0) = vo3dGrdPtRgt[i].x;
 		o3dPtMat.at<double>(1, 0) = vo3dGrdPtRgt[i].y;
 		o3dPtMat.at<double>(2, 0) = 1;
 		o2dPtMat = m_oHomoMat * o3dPtMat;
-		vo2dGrdPtRgt.push_back(cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))));
+		vo2dGrdPtRgt.emplace_back((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0)));
 	}
 
 	// draw grid lines on the frame image
 	for (int i = 0; i < oDispGrdDim.width; i++)
-		cv::line(oImgPlt, vo2dGrdPtTop[i], vo2dGrdPtBtm[i], cv::Scalar(int(255.0 * ((double)i / (double)oDispGrdDim.width)), 127, 127), 2, CV_AA);
+		cv::line(oImgPlt, vo2dGrdPtTop[i], vo2dGrdPtBtm[i], cv::Scalar(int(255.0 * ((double)i / (double)oDispGrdDim.width)), 127, 127), 2, cv::LINE_AA);
 
 	for (int i = 0; i < oDispGrdDim.width; i++)
-		cv::line(oImgPlt, vo2dGrdPtLft[i], vo2dGrdPtRgt[i], cv::Scalar(127, 127, int(255.0 * ((double)i / (double)oDispGrdDim.width))), 2, CV_AA);
+		cv::line(oImgPlt, vo2dGrdPtLft[i], vo2dGrdPtRgt[i], cv::Scalar(127, 127, int(255.0 * ((double)i / (double)oDispGrdDim.width))), 2, cv::LINE_AA);
 
 	// plot the 2D points
 	for (int i = 0; i < m_vo2dPt.size(); i++)
 	{
 		char acPtIdx[32];
-		cv::circle(oImgPlt, m_vo2dPt[i], 6, cv::Scalar(255, 0, 0), 1, CV_AA);  // draw the circle
+		cv::circle(oImgPlt, m_vo2dPt[i], 6, cv::Scalar(255, 0, 0), 1, cv::LINE_AA);  // draw the circle
 		std::sprintf(acPtIdx, "%d", i);
 		cv::putText(oImgPlt, acPtIdx, m_vo2dPt[i], cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 2);
 	}
@@ -335,11 +334,11 @@ void CCamCal::pltDispGrd(void)
 		o2dPtMat = m_oHomoMat * o3dPtMat;
 
 		cv::circle(oImgPlt, cv::Point2f((o2dPtMat.at<double>(0, 0) / o2dPtMat.at<double>(2, 0)), (o2dPtMat.at<double>(1, 0) / o2dPtMat.at<double>(2, 0))),
-			12, cv::Scalar(0, 0, 255), 1, CV_AA);  // draw the circle
+			12, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);  // draw the circle
 	}
 
 	// display plotted image
-	cv::namedWindow("3D grid on the ground plane", CV_WINDOW_NORMAL);
+	cv::namedWindow("3D grid on the ground plane", cv::WINDOW_NORMAL);
 	cv::imshow("3D grid on the ground plane", oImgPlt);
 	cv::waitKey(0);
 	cv::destroyAllWindows();
@@ -347,17 +346,6 @@ void CCamCal::pltDispGrd(void)
 	// save plotted image
 	if (m_oCfg.getOutCalDispFlg())
 		cv::imwrite(m_oCfg.getOutCalDispPth(), oImgPlt);
-}
-
-
-C2dPtSel::C2dPtSel(void)
-{
-
-}
-
-C2dPtSel::~C2dPtSel(void)
-{
-
 }
 
 void C2dPtSel::initialize(CCfg oCfg, cv::Mat oImgFrm)
@@ -383,7 +371,7 @@ std::vector<cv::Point> C2dPtSel::process(void)
 
 		cv::Mat oImgFrm = m_oImgFrm.clone();
 
-		cv::namedWindow("selector of 2D points", CV_WINDOW_NORMAL);
+		cv::namedWindow("selector of 2D points", cv::WINDOW_NORMAL);
 		cv::imshow("selector of 2D points", m_oImgFrm);
 		cv::setMouseCallback("selector of 2D points", on_mouse);  // register for mouse event
 
@@ -426,7 +414,7 @@ void C2dPtSel::addNd(int nX, int nY)
 
 	m_voNd.push_back(oCurrNd);
 	// std::cout << "current node(" << oCurrNd.x << "," << oCurrNd.y << ")" << std::endl;	// for debug
-	cv::circle(m_oImgFrm, oCurrNd, 6, cv::Scalar(255, 0, 0), 1, CV_AA);  // draw the circle
+	cv::circle(m_oImgFrm, oCurrNd, 6, cv::Scalar(255, 0, 0), 1, cv::LINE_AA);  // draw the circle
 	std::sprintf(acNdIdx, "%d", (int)(m_voNd.size() - 1));
 	cv::putText(m_oImgFrm, acNdIdx, oCurrNd, cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 2);
 	cv::imshow("selector of 2D points", m_oImgFrm);
